@@ -1,0 +1,25 @@
+server:
+  port: 8080
+  error:
+    include-stacktrace: never
+
+spring:
+  profiles:
+    active: development
+
+  # Database
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/parking_control_db
+    username: root
+    password: root
+
+  # JPA properties
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+    generate-ddl: true
