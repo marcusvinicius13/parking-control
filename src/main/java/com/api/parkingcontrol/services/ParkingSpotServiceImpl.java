@@ -7,6 +7,9 @@ import com.api.parkingcontrol.models.ParkingSpotModel;
 import com.api.parkingcontrol.repositories.IParkingSpotRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -21,7 +24,7 @@ import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
-public class ParkingSpotServiceImpl implements IParkingSpotService{
+public class ParkingSpotServiceImpl implements IParkingSpotService {
 
     // Injeção de dependência via construtor, quando for requisitado.
     private final IParkingSpotRepository iParkingSpotRepository;
@@ -59,6 +62,12 @@ public class ParkingSpotServiceImpl implements IParkingSpotService{
     @Override
     public List<ParkingSpotResponse> listAll() {
         return converterParkingSpotModelToParkingSpotResponseMap(iParkingSpotRepository.findAll());
+    }
+
+    @Override
+    public Page<ParkingSpotResponse> listAllPageable(Pageable pageable) {
+
+        return converterParkingSpotModelToParkingSpotResponseMapPage(iParkingSpotRepository.findAll(pageable));
     }
 
     /**
@@ -172,6 +181,19 @@ public class ParkingSpotServiceImpl implements IParkingSpotService{
         */
         return parkingSpotModelList.stream()
                 .map(this::converterParkingSpotModelToParkingSpotResponse).collect(Collectors.toList());
+    }
+
+    /***
+     * @autor Marcus Vinicius
+     * @param parkingSpotModelPage
+     * @return Page<ParkingSpotResponse>
+     * @implNote Método que converte uma lista de objetos do tipo ParkingSpotModel
+     *              para uma lista do tipo ParkingSpotResponse utilizando o map() do stream()
+     */
+    private Page<ParkingSpotResponse> converterParkingSpotModelToParkingSpotResponseMapPage(Page<ParkingSpotModel> parkingSpotModelPage) {
+        final List<ParkingSpotResponse> parkingSpotResponseList = parkingSpotModelPage.stream()
+                .map(this::converterParkingSpotModelToParkingSpotResponse).collect(Collectors.toList());
+        return new PageImpl<>(parkingSpotResponseList);
     }
 
 }
